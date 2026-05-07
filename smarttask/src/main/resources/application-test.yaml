@@ -1,0 +1,32 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  # In-Memory H2 Database for Testing
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  # JPA/Hibernate Configuration for Testing
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: false
+
+# Server Configuration
+server:
+  port: 8081
+
+# Logging
+logging:
+  level:
+    ch.evers.martin.smarttask: INFO
+
+
