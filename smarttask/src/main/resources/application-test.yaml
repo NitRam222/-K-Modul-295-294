@@ -20,6 +20,10 @@ spring:
       hibernate:
         format_sql: false
 
+  sql:
+    init:
+      mode: never
+
 # Server Configuration
 server:
   port: 8081
@@ -28,5 +32,4 @@ server:
 logging:
   level:
     ch.evers.martin.smarttask: INFO
-
 

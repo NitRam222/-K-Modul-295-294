@@ -9,11 +9,18 @@ spring:
     password: myuser
     driver-class-name: org.postgresql.Driver
 
+  # Run data.sql on application startup
+  sql:
+    init:
+      mode: always
+      continue-on-error: false
+
   # JPA/Hibernate Configuration
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

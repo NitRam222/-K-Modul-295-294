@@ -60,7 +60,7 @@ public class SecurityConfig {
 
                 // Rollen mappen SimpleGrantedAuthority mit ROLE_
                 var realmAuthorities = roles.stream()
-                        .map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role))
+                        .map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
                         .collect(Collectors.toList());
 
                 authorities.addAll(realmAuthorities);

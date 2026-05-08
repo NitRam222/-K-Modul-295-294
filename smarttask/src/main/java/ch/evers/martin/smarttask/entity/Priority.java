@@ -1,5 +1,6 @@
 package ch.evers.martin.smarttask.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class Priority {
     private String level;
 
     @OneToMany(mappedBy = "priority", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Task> tasks;
 
     // Getters

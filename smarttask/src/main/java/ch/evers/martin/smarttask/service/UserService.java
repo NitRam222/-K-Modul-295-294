@@ -98,6 +98,10 @@ public class UserService {
             currentUser.setEmail(updatedUser.getEmail());
         }
 
+        if (updatedUser.getDescription() != null) {
+            currentUser.setDescription(updatedUser.getDescription());
+        }
+
         return userRepository.save(currentUser);
     }
 }

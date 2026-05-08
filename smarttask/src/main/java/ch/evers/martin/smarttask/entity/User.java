@@ -1,5 +1,6 @@
 package ch.evers.martin.smarttask.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +32,11 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Task> tasks;
 
     // Getters
@@ -55,6 +60,10 @@ public class User {
         return tasks;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -75,7 +84,8 @@ public class User {
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
-
-
-
