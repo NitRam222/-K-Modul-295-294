@@ -28,12 +28,15 @@ public class Task {
     @Column(nullable = false)
     private Boolean completed = false;
 
+    @NotBlank(message = "Status darf nicht leer sein")
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'TODO'")
+    private String status = "TODO";
+
     @Column
     private LocalDate dueDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,6 +66,10 @@ public class Task {
 
     public LocalDate getDueDate() {
         return dueDate;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public User getUser() {
@@ -96,6 +103,10 @@ public class Task {
 
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setUser(User user) {

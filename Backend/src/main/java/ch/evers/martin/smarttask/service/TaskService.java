@@ -1,7 +1,11 @@
 package ch.evers.martin.smarttask.service;
 
+import ch.evers.martin.smarttask.entity.Category;
+import ch.evers.martin.smarttask.entity.Priority;
 import ch.evers.martin.smarttask.entity.Task;
 import ch.evers.martin.smarttask.entity.User;
+import ch.evers.martin.smarttask.repository.CategoryRepository;
+import ch.evers.martin.smarttask.repository.PriorityRepository;
 import ch.evers.martin.smarttask.repository.TaskRepository;
 import ch.evers.martin.smarttask.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,12 @@ public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private PriorityRepository priorityRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -50,6 +60,36 @@ public class TaskService {
         return Optional.empty();
     }
 
+    public List<Task> findTasksByUserId(Long userId) {
+        return taskRepository.findByUserId(userId);
+    }
+
+    private Category resolveCategoryForCurrentUser(Category category) {
+        if (category == null || category.getId() == null) {
+            return null;
+        }
+        User currentUser = userService.getCurrentUser();
+        Category existingCategory = categoryRepository.findById(category.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Kategorie nicht gefunden"));
+        if (!existingCategory.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("Kategorie nicht gefunden");
+        }
+        return existingCategory;
+    }
+
+    private Priority resolvePriorityForCurrentUser(Priority priority) {
+        if (priority == null || priority.getId() == null) {
+            return null;
+        }
+        User currentUser = userService.getCurrentUser();
+        Priority existingPriority = priorityRepository.findById(priority.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Priorität nicht gefunden"));
+        if (!existingPriority.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("Priorität nicht gefunden");
+        }
+        return existingPriority;
+    }
+
     // Neue Aufgabe erstellen
     public Task createTask(Task task) {
         if (task.getTitle() == null || task.getTitle().isEmpty()) {
@@ -58,6 +98,13 @@ public class TaskService {
 
         User currentUser = userService.getCurrentUser();
         task.setUser(currentUser);
+        task.setCategory(resolveCategoryForCurrentUser(task.getCategory()));
+        task.setPriority(resolvePriorityForCurrentUser(task.getPriority()));
+
+        if (task.getStatus() == null || task.getStatus().isBlank()) {
+            task.setStatus("TODO");
+        }
+        task.setCompleted("DONE".equalsIgnoreCase(task.getStatus()));
 
         if (task.getCompleted() == null) {
             task.setCompleted(false);
@@ -85,6 +132,11 @@ public class TaskService {
             existingTask.setDescription(updatedTask.getDescription());
         }
 
+        if (updatedTask.getStatus() != null && !updatedTask.getStatus().isBlank()) {
+            existingTask.setStatus(updatedTask.getStatus());
+            existingTask.setCompleted("DONE".equalsIgnoreCase(updatedTask.getStatus()));
+        }
+
         if (updatedTask.getCompleted() != null) {
             existingTask.setCompleted(updatedTask.getCompleted());
         }
@@ -94,11 +146,11 @@ public class TaskService {
         }
 
         if (updatedTask.getCategory() != null) {
-            existingTask.setCategory(updatedTask.getCategory());
+            existingTask.setCategory(resolveCategoryForCurrentUser(updatedTask.getCategory()));
         }
 
         if (updatedTask.getPriority() != null) {
-            existingTask.setPriority(updatedTask.getPriority());
+            existingTask.setPriority(resolvePriorityForCurrentUser(updatedTask.getPriority()));
         }
 
         return taskRepository.save(existingTask);

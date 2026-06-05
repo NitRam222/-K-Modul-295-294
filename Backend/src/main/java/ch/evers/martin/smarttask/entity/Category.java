@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "categories", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "name"})})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
@@ -19,8 +19,13 @@ public class Category {
     private Long id;
 
     @NotBlank(message = "Kategoriename darf nicht leer sein")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -35,6 +40,10 @@ public class Category {
         return name;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public List<Task> getTasks() {
         return tasks;
     }
@@ -46,6 +55,10 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setTasks(List<Task> tasks) {

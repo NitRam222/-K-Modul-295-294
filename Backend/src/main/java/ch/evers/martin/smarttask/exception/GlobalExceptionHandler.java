@@ -65,7 +65,8 @@ public class GlobalExceptionHandler {
         response.put("timestamp", LocalDateTime.now());
         response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         response.put("error", "Internal Server Error");
-        response.put("message", "Ein unerwarteter Fehler ist aufgetreten");
+        response.put("message", ex.getMessage() != null ? ex.getMessage() : "Ein unerwarteter Fehler ist aufgetreten");
+        response.put("exception", ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

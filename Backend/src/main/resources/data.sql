@@ -1,35 +1,3 @@
--- Priorities
-INSERT INTO priorities (level)
-VALUES ('LOW')
-ON CONFLICT (level) DO NOTHING;
-
-INSERT INTO priorities (level)
-VALUES ('MEDIUM')
-ON CONFLICT (level) DO NOTHING;
-
-INSERT INTO priorities (level)
-VALUES ('HIGH')
-ON CONFLICT (level) DO NOTHING;
-
-
--- Categories
-INSERT INTO categories (name)
-VALUES ('Arbeit')
-ON CONFLICT (name) DO NOTHING;
-
-INSERT INTO categories (name)
-VALUES ('Privat')
-ON CONFLICT (name) DO NOTHING;
-
-INSERT INTO categories (name)
-VALUES ('Shopping')
-ON CONFLICT (name) DO NOTHING;
-
-INSERT INTO categories (name)
-VALUES ('Haushalt')
-ON CONFLICT (name) DO NOTHING;
-
-
 -- Demo Users
 INSERT INTO users (username, email, role)
 VALUES ('demo_read', 'demo_read@example.com', 'READ')
@@ -38,6 +6,52 @@ ON CONFLICT (username) DO NOTHING;
 INSERT INTO users (username, email, role)
 VALUES ('demo_update', 'demo_update@example.com', 'UPDATE')
 ON CONFLICT (username) DO NOTHING;
+
+
+-- Priorities für demo_update
+INSERT INTO priorities (level, user_id)
+SELECT 'LOW', u.id
+FROM users u
+WHERE u.username = 'demo_update'
+ON CONFLICT (user_id, level) DO NOTHING;
+
+INSERT INTO priorities (level, user_id)
+SELECT 'MEDIUM', u.id
+FROM users u
+WHERE u.username = 'demo_update'
+ON CONFLICT (user_id, level) DO NOTHING;
+
+INSERT INTO priorities (level, user_id)
+SELECT 'HIGH', u.id
+FROM users u
+WHERE u.username = 'demo_update'
+ON CONFLICT (user_id, level) DO NOTHING;
+
+
+-- Categories für demo_update
+INSERT INTO categories (name, user_id)
+SELECT 'Arbeit', u.id
+FROM users u
+WHERE u.username = 'demo_update'
+ON CONFLICT (user_id, name) DO NOTHING;
+
+INSERT INTO categories (name, user_id)
+SELECT 'Privat', u.id
+FROM users u
+WHERE u.username = 'demo_update'
+ON CONFLICT (user_id, name) DO NOTHING;
+
+INSERT INTO categories (name, user_id)
+SELECT 'Shopping', u.id
+FROM users u
+WHERE u.username = 'demo_update'
+ON CONFLICT (user_id, name) DO NOTHING;
+
+INSERT INTO categories (name, user_id)
+SELECT 'Haushalt', u.id
+FROM users u
+WHERE u.username = 'demo_update'
+ON CONFLICT (user_id, name) DO NOTHING;
 
 
 -- Demo Task 1
@@ -59,8 +73,8 @@ SELECT
     c.id,
     p.id
 FROM users u
-    JOIN categories c ON c.name = 'Arbeit'
-    JOIN priorities p ON p.level = 'HIGH'
+    JOIN categories c ON c.name = 'Arbeit' AND c.user_id = u.id
+    JOIN priorities p ON p.level = 'HIGH' AND p.user_id = u.id
 WHERE u.username = 'demo_update'
   AND NOT EXISTS (
     SELECT 1
@@ -89,8 +103,8 @@ SELECT
     c.id,
     p.id
 FROM users u
-    JOIN categories c ON c.name = 'Shopping'
-    JOIN priorities p ON p.level = 'MEDIUM'
+    JOIN categories c ON c.name = 'Shopping' AND c.user_id = u.id
+    JOIN priorities p ON p.level = 'MEDIUM' AND p.user_id = u.id
 WHERE u.username = 'demo_update'
   AND NOT EXISTS (
     SELECT 1

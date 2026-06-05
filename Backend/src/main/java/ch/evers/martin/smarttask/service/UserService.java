@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +29,10 @@ public class UserService {
     // Benutzer nach Email abrufen
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public List<User> searchUsers(String query) {
+        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query, query);
     }
 
     // Neuen Benutzer erstellen
@@ -59,10 +64,36 @@ public class UserService {
         }
 
         String username = authentication.getName();
+        Object principal = authentication.getPrincipal();
+
+        if (username == null || username.isBlank()) {
+            if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt) {
+                username = jwt.getClaimAsString("preferred_username");
+                if (username == null || username.isBlank()) {
+                    username = jwt.getClaimAsString("email");
+                }
+                if (username == null || username.isBlank()) {
+                    username = jwt.getSubject();
+                }
+            }
+        }
+
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Benutzername im Token fehlt");
+        }
 
         Optional<User> existingUser = userRepository.findByUsername(username);
         if (existingUser.isPresent()) {
-            return existingUser.get();
+            User currentUser = existingUser.get();
+            String tokenEmail = null;
+            if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt) {
+                tokenEmail = jwt.getClaimAsString("email");
+            }
+            if (tokenEmail != null && !tokenEmail.isBlank() && !tokenEmail.equals(currentUser.getEmail())) {
+                currentUser.setEmail(tokenEmail);
+                userRepository.save(currentUser);
+            }
+            return currentUser;
         }
 
         // Rolle aus Authorities extrahieren
@@ -72,10 +103,17 @@ public class UserService {
             .findFirst()
             .orElse("READ"); // Default
 
-        // Neuen User erstellen
+        String email = null;
+        if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt) {
+            email = jwt.getClaimAsString("email");
+        }
+        if (email == null || email.isBlank()) {
+            email = username + "@example.com"; // Placeholder email
+        }
+
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setEmail(username + "@example.com"); // Placeholder email
+        newUser.setEmail(email);
         newUser.setRole(role);
 
         return userRepository.save(newUser);

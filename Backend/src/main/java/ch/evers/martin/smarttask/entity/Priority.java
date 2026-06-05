@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "priorities")
+@Table(name = "priorities", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "level"})})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Priority {
@@ -19,8 +19,13 @@ public class Priority {
     private Long id;
 
     @NotBlank(message = "Prioritätslevel darf nicht leer sein")
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String level;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
     @OneToMany(mappedBy = "priority", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -35,6 +40,10 @@ public class Priority {
         return level;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public List<Task> getTasks() {
         return tasks;
     }
@@ -46,6 +55,10 @@ public class Priority {
 
     public void setLevel(String level) {
         this.level = level;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setTasks(List<Task> tasks) {

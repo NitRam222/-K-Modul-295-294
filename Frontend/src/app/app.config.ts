@@ -1,84 +1,35 @@
-import { LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, withXsrfConfiguration } from '@angular/common/http';
-import { ApplicationConfig, enableProdMode, importProvidersFrom, inject, provideBrowserGlobalErrorListeners, provideEnvironmentInitializer, provideZonelessChangeDetection } from '@angular/core';
-import { MatMomentDateModule } from '@angular/material-moment-adapter';
-import { BrowserModule } from '@angular/platform-browser';
-import { provideTranslateService } from '@ngx-translate/core';
-import { AuthConfig, OAuthStorage, provideOAuthClient } from 'angular-oauth2-oidc';
-import { HttpXSRFInterceptor } from './interceptor/http.csrf.interceptor';
-import { AppAuthService } from './service/app.auth.service';
-import { environment } from '../environments/environment';
-import { provideTranslateHttpLoader, TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { MatPaginatorIntl } from '@angular/material/paginator';
-import { MatPaginatorI18nService } from './service/mat.intl.service';
-import { provideRouter } from '@angular/router';
+import { APP_INITIALIZER, importProvidersFrom } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { OAuthModule } from 'angular-oauth2-oidc';
 import { routes } from './app.routes';
+import { environment } from '../environments/environment';
+import { AuthService } from './services/auth.service';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
-if (environment.production) {
-  enableProdMode();
+export function initializeAuth(authService: AuthService): () => Promise<boolean> {
+  return () => authService.initialize();
 }
 
-export const authConfig: AuthConfig = {
-  issuer: 'http://localhost:8080/realms/ILV',
-  requireHttps: false,
-  redirectUri: environment.frontendBaseUrl,
-  postLogoutRedirectUri: environment.frontendBaseUrl,
-  clientId: 'demoapp',
-  scope: 'openid profile roles offline_access',
-  responseType: 'code',
-  showDebugInformation: true,
-  requestAccessToken: true,
-  silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-  silentRefreshTimeout: 500,
-  clearHashAfterLogin: true,
-  waitForTokenInMsec: 1000
-};
-
-export function storageFactory(): OAuthStorage {
-  return sessionStorage;
-}
-
-export function HttpLoaderFactory() {
-  return new TranslateHttpLoader();
-}
-
-export const appConfig: ApplicationConfig = {
+export const appConfig = {
   providers: [
-    provideZonelessChangeDetection(),
-    provideBrowserGlobalErrorListeners(),
+    provideAnimations(),
+    provideRouter(routes, withEnabledBlockingInitialNavigation()),
+    provideHttpClient(withInterceptors([authInterceptor])),
     importProvidersFrom(
-      BrowserModule,
-      MatMomentDateModule,
-    ),
-    {
-      provide: MatPaginatorIntl,
-      useClass: MatPaginatorI18nService,
-    },
-    { provide: AuthConfig, useValue: authConfig },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpXSRFInterceptor, multi: true },
-    {
-      provide: OAuthStorage,
-      useFactory: storageFactory,
-    },
-    Location,
-    { provide: LocationStrategy, useClass: PathLocationStrategy },
-    provideTranslateService({
-      fallbackLang: 'en',
-      lang: 'en',
-      loader: provideTranslateHttpLoader({
-        prefix: '/assets/i18n/',
-        suffix: '.json'
-      }),
-    }),
-    provideHttpClient(
-      withInterceptorsFromDi(),
-      withXsrfConfiguration({
-        cookieName: 'XSRF-TOKEN',
-        headerName: 'X-XSRF-TOKEN',
+      OAuthModule.forRoot({
+        resourceServer: {
+          allowedUrls: [environment.backendBaseUrl],
+          sendAccessToken: true
+        }
       })
     ),
-    provideOAuthClient({ resourceServer: { sendAccessToken: true, allowedUrls: [environment.backendBaseUrl], } }),
-    provideEnvironmentInitializer(() => { inject(AppAuthService).initAuth().finally() }),
-    provideRouter(routes)
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAuth,
+      deps: [AuthService],
+      multi: true
+    }
   ]
 };
