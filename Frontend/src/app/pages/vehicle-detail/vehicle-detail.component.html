@@ -1,0 +1,39 @@
+<div>
+  <div>
+    <mat-toolbar color="primary">
+      <mat-toolbar-row>
+        <span class="toolbar-spacer"></span>
+        <button (click)="back()" color="primary" mat-button style="color: white">
+          <mat-icon>arrow_back_ios</mat-icon>
+          {{ 'main.button_back' | translate }}
+        </button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </div>
+  <div class="app-form">
+    <form (ngSubmit)="save(objForm.value)" [formGroup]="objForm!">
+      <mat-form-field>
+        <mat-label>{{ 'vehicle.licence' | translate }}</mat-label>
+        <input #inputLicence appAutofocus formControlName="licence" matInput maxlength="20" required>
+        <mat-hint align="end">{{inputLicence.value.length || 0}}/20</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicle.type' | translate }}</mat-label>
+        <mat-select formControlName="vehicleType" required>
+          <mat-option value="CAR">{{ 'vehicle.typeCar' | translate }}</mat-option>
+          <mat-option value="BICYCLE">{{ 'vehicle.typeBicycle' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicle.description' | translate }}</mat-label>
+        <textarea #inputDesc cdkAutosizeMaxRows="10"
+                  cdkAutosizeMinRows="4"
+                  cdkTextareaAutosize formControlName="description" matInput maxlength="255"></textarea>
+        <mat-hint align="end">{{inputDesc.value.length || 0}}/255</mat-hint>
+      </mat-form-field>
+      <button [disabled]="!objForm.valid" color="primary" mat-raised-button style="width: 200px">
+        {{ 'main.button_save' | translate }}
+      </button>
+    </form>
+  </div>
+</div>

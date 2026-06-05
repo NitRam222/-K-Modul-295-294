@@ -1,0 +1,54 @@
+<div>
+  <div>
+    <mat-toolbar *appIsInRole="'admin'" color="primary">
+      <span>
+        <button (click)="add()" *appIsInRole="'admin'" color="primary" mat-button style="color: white">
+          <mat-icon>add</mat-icon>
+          {{'vehicle.button_new' | translate}}
+        </button>
+      </span>
+    </mat-toolbar>
+  </div>
+  <table [dataSource]="vehicleDataSource" class="mat-elevation-z8 vehicles-table" mat-table>
+    <ng-container matColumnDef="actions">
+      <th *matHeaderCellDef class="w-75 th-center" mat-header-cell></th>
+      <td *matCellDef="let element" mat-cell style="text-align: end">
+        <button (click)="edit(element)" *appIsInRole="'admin'" color="primary" mat-button>
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button (click)="delete(element)" *appIsInRole="'admin'" color="warn" mat-button>
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="vehicleType">
+      <th *matHeaderCellDef mat-header-cell>{{'vehicle.type' | translate}}</th>
+      <td *matCellDef="let element" mat-cell>
+        @if (element.vehicleType === 'CAR') {
+          <span>
+            {{ 'vehicle.typeCar' | translate }}
+          </span>
+        }
+        @if (element.vehicleType === 'BICYCLE') {
+          <span>
+            {{ 'vehicle.typeBicycle' | translate }}
+          </span>
+        }
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="licence">
+      <th *matHeaderCellDef mat-header-cell>{{'vehicle.licence' | translate}}</th>
+      <td *matCellDef="let element" mat-cell> {{element.licence}} </td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <th *matHeaderCellDef mat-header-cell>{{'vehicle.description' | translate}}</th>
+      <td *matCellDef="let element" mat-cell> {{element.description}} </td>
+    </ng-container>
+    <tr *matHeaderRowDef="columns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: columns;" mat-row></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[5, 10]" [pageSize]="10"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>
+

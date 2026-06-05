@@ -1,0 +1,73 @@
+<div>
+  <div>
+    <mat-toolbar color="primary">
+      <mat-toolbar-row>
+        <span class="toolbar-spacer"></span>
+        <button (click)="back()" color="primary" mat-button style="color: white">
+          <mat-icon>arrow_back_ios</mat-icon>
+          {{ 'main.button_back' | translate }}
+        </button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </div>
+  <div class="app-form">
+    <form (ngSubmit)="save(objForm.value)" [formGroup]="objForm!">
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.fromDate' | translate }}</mat-label>
+        <input [matDatepicker]="pickerFromDate" appAutofocus formControlName="fromDate" matInput required>
+        <mat-datepicker-toggle [for]="pickerFromDate" matSuffix></mat-datepicker-toggle>
+        <mat-datepicker #pickerFromDate></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.toDate' | translate }}</mat-label>
+        <input [matDatepicker]="pickerToDate" formControlName="toDate" matInput required>
+        <mat-datepicker-toggle [for]="pickerToDate" matSuffix></mat-datepicker-toggle>
+        <mat-datepicker #pickerToDate></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.fromLocation' | translate }}</mat-label>
+        <input #inputFromLocation formControlName="fromLocation" matInput maxlength="100" required>
+        <mat-hint align="end">{{inputFromLocation.value.length || 0}}/100</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.toLocation' | translate }}</mat-label>
+        <input #inputToLocation formControlName="toLocation" matInput maxlength="100" required>
+        <mat-hint align="end">{{inputToLocation.value.length || 0}}/100</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.km' | translate }}</mat-label>
+        <input formControlName="km" matInput pattern="^\d*(\.\d{0,2})?$" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.vehicle' | translate }}</mat-label>
+        <mat-select form formControlName="vehicleId" required>
+          @for (vehicle of vehicles; track vehicle) {
+            <mat-option [value]="vehicle.id">
+              {{vehicle.licence}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.employee' | translate }}</mat-label>
+        <mat-select formControlName="employeeId" required>
+          @for (employee of employees; track employee) {
+            <mat-option [value]="employee.id">
+              {{employee.badge}} - {{employee.firstname}}&nbsp;{{employee.name}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'vehicleUsage.text' | translate }}</mat-label>
+        <textarea #inputText cdkAutosizeMaxRows="10"
+          cdkAutosizeMinRows="4"
+        cdkTextareaAutosize formControlName="text" matInput maxlength="500"></textarea>
+        <mat-hint align="end">{{inputText.value.length || 0}}/255</mat-hint>
+      </mat-form-field>
+      <button [disabled]="!objForm.valid" color="primary" mat-raised-button style="width: 200px">
+        {{ 'main.button_save' | translate }}
+      </button>
+    </form>
+  </div>
+</div>
