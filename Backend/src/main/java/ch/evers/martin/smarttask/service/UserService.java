@@ -17,6 +17,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DefaultDataService defaultDataService;
+
     // Benutzer nach ID abrufen
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
@@ -54,7 +57,12 @@ public class UserService {
             throw new IllegalArgumentException("Benutzer mit dieser Email existiert bereits");
         }
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Default-Daten nur beim Erstellen eines neuen Benutzers anlegen
+        defaultDataService.createDefaultsForUser(savedUser);
+
+        return savedUser;
     }
 
     // Aktuellen angemeldeten Benutzer abrufen oder erstellen
@@ -140,7 +148,12 @@ public class UserService {
         newUser.setEmail(email);
         newUser.setRole(role);
 
-        return userRepository.save(newUser);
+        User savedUser = userRepository.save(newUser);
+
+        // Default-Daten nur beim ersten Erstellen des Benutzers anlegen
+        defaultDataService.createDefaultsForUser(savedUser);
+
+        return savedUser;
     }
 
     // Aktuelles Benutzerprofil abrufen
