@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { TaskListPageComponent } from './pages/task-list-page/task-list-page.component';
 import { TaskDetailPageComponent } from './pages/task-detail-page/task-detail-page.component';
 import { TaskFormComponent } from './pages/task-form/task-form.component';
@@ -18,7 +17,6 @@ export const routes: Route[] = [
     path: '',
     canActivate: [AuthGuard],
     children: [
-      { path: 'dashboard', component: DashboardPageComponent },
       { path: 'tasks', component: TaskListPageComponent },
       { path: 'tasks/new', component: TaskFormComponent, canActivate: [RoleGuard], data: { roles: [AppRoles.Update] } },
       { path: 'tasks/edit/:id', component: TaskFormComponent, canActivate: [RoleGuard], data: { roles: [AppRoles.Update] } },
@@ -27,8 +25,8 @@ export const routes: Route[] = [
       { path: 'priorities', component: PriorityPageComponent },
       { path: 'profile', component: UserProfilePageComponent },
       { path: 'users/search', component: UserSearchPageComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'tasks', pathMatch: 'full' }
     ]
   },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: 'tasks' }
 ];

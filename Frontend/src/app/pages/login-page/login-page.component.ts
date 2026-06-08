@@ -24,5 +24,5 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginPageComponent {
   auth = inject(AuthService);
-  constructor() { if (this.auth.isAuthenticated) inject(Router).navigate(['/dashboard']); }
+  constructor() { if (this.auth.isAuthenticated) inject(Router).navigate(['/tasks']); }
 }

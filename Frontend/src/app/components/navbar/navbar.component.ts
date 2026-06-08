@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, RouterModule],
   template: `
     <nav class="navbar">
-      <a class="brand" routerLink="/dashboard">SmartTask</a>
+      <a class="brand" routerLink="/tasks">SmartTask</a>
       <div class="links" *ngIf="auth.isAuthenticated">
         <a routerLink="/tasks">Aufgaben</a>
         <a routerLink="/categories">Kategorien</a>

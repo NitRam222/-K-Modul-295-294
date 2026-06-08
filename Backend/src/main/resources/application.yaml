@@ -2,20 +2,16 @@ spring:
   application:
     name: smarttask
 
-  # Database Configuration
   datasource:
     url: jdbc:postgresql://localhost:5432/smarttask_db
     username: myuser
     password: myuser
     driver-class-name: org.postgresql.Driver
 
-  # Run data.sql on application startup
   sql:
     init:
-      mode: always
-      continue-on-error: false
+      mode: never
 
-  # JPA/Hibernate Configuration
   jpa:
     hibernate:
       ddl-auto: update
@@ -27,7 +23,6 @@ spring:
         format_sql: true
         temp.use_jdbc_metadata_defaults: false
 
-  # Security - OAuth2 / Keycloak
   security:
     oauth2:
       resourceserver:
@@ -35,13 +30,11 @@ spring:
           issuer-uri: http://localhost:8180/realms/myrealm
           jwk-set-uri: http://localhost:8180/realms/myrealm/protocol/openid-connect/certs
 
-# Server Configuration
 server:
   port: 8081
   servlet:
     context-path: /
 
-# API Documentation (Swagger)
 springdoc:
   swagger-ui:
     use-root-path: true
