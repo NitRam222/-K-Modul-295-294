@@ -5,6 +5,7 @@ import ch.evers.martin.smarttask.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,57 +60,80 @@ public class UserService {
     // Aktuellen angemeldeten Benutzer abrufen oder erstellen
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalArgumentException("Nicht authentifiziert");
         }
 
-        String username = authentication.getName();
         Object principal = authentication.getPrincipal();
 
-        if (username == null || username.isBlank()) {
-            if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt) {
-                username = jwt.getClaimAsString("preferred_username");
-                if (username == null || username.isBlank()) {
-                    username = jwt.getClaimAsString("email");
-                }
-                if (username == null || username.isBlank()) {
-                    username = jwt.getSubject();
-                }
+        String username = null;
+        String email = null;
+
+        if (principal instanceof Jwt jwt) {
+            username = jwt.getClaimAsString("preferred_username");
+
+            if (username == null || username.isBlank()) {
+                username = jwt.getClaimAsString("name");
             }
+
+            if (username == null || username.isBlank()) {
+                username = jwt.getClaimAsString("email");
+            }
+
+            if (username == null || username.isBlank()) {
+                username = jwt.getSubject();
+            }
+
+            email = jwt.getClaimAsString("email");
+        }
+
+        if (username == null || username.isBlank()) {
+            username = authentication.getName();
         }
 
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Benutzername im Token fehlt");
         }
 
-        Optional<User> existingUser = userRepository.findByUsername(username);
-        if (existingUser.isPresent()) {
-            User currentUser = existingUser.get();
-            String tokenEmail = null;
-            if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt) {
-                tokenEmail = jwt.getClaimAsString("email");
+        if (email == null || email.isBlank()) {
+            email = username + "@example.com";
+        }
+
+        Optional<User> existingUserByUsername = userRepository.findByUsername(username);
+        if (existingUserByUsername.isPresent()) {
+            User currentUser = existingUserByUsername.get();
+
+            if (email != null && !email.isBlank() && !email.equals(currentUser.getEmail())) {
+                Optional<User> userWithSameEmail = userRepository.findByEmail(email);
+
+                if (userWithSameEmail.isEmpty() || userWithSameEmail.get().getId().equals(currentUser.getId())) {
+                    currentUser.setEmail(email);
+                    return userRepository.save(currentUser);
+                }
             }
-            if (tokenEmail != null && !tokenEmail.isBlank() && !tokenEmail.equals(currentUser.getEmail())) {
-                currentUser.setEmail(tokenEmail);
-                userRepository.save(currentUser);
+
+            return currentUser;
+        }
+
+        Optional<User> existingUserByEmail = userRepository.findByEmail(email);
+        if (existingUserByEmail.isPresent()) {
+            User currentUser = existingUserByEmail.get();
+
+            if (!username.equals(currentUser.getUsername()) && userRepository.findByUsername(username).isEmpty()) {
+                currentUser.setUsername(username);
+                return userRepository.save(currentUser);
             }
+
             return currentUser;
         }
 
         // Rolle aus Authorities extrahieren
         String role = authentication.getAuthorities().stream()
-            .filter(auth -> auth.getAuthority().startsWith("ROLE_"))
-            .map(auth -> auth.getAuthority().substring(5)) // Entferne "ROLE_"
-            .findFirst()
-            .orElse("READ"); // Default
-
-        String email = null;
-        if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt) {
-            email = jwt.getClaimAsString("email");
-        }
-        if (email == null || email.isBlank()) {
-            email = username + "@example.com"; // Placeholder email
-        }
+                .filter(auth -> auth.getAuthority().startsWith("ROLE_"))
+                .map(auth -> auth.getAuthority().substring(5))
+                .findFirst()
+                .orElse("READ");
 
         User newUser = new User();
         newUser.setUsername(username);
@@ -130,7 +154,7 @@ public class UserService {
 
         if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
             if (!updatedUser.getEmail().equals(currentUser.getEmail()) &&
-                userRepository.findByEmail(updatedUser.getEmail()).isPresent()) {
+                    userRepository.findByEmail(updatedUser.getEmail()).isPresent()) {
                 throw new IllegalArgumentException("Email wird bereits verwendet");
             }
             currentUser.setEmail(updatedUser.getEmail());

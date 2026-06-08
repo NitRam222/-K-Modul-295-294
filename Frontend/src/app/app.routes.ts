@@ -8,7 +8,6 @@ import { CategoryPageComponent } from './pages/category-page/category-page.compo
 import { PriorityPageComponent } from './pages/priority-page/priority-page.component';
 import { UserProfilePageComponent } from './pages/user-profile-page/user-profile-page.component';
 import { UserSearchPageComponent } from './pages/user-search-page/user-search-page.component';
-import { PublicUserTasksPageComponent } from './pages/public-user-tasks-page/public-user-tasks-page.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { AppRoles } from '../app.roles';
@@ -28,7 +27,6 @@ export const routes: Route[] = [
       { path: 'priorities', component: PriorityPageComponent },
       { path: 'profile', component: UserProfilePageComponent },
       { path: 'users/search', component: UserSearchPageComponent },
-      { path: 'users/:username/tasks', component: PublicUserTasksPageComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { RoleService } from '../../services/role.service';
 import { AuthService } from '../../services/auth.service';
-import { UserService } from '../../services/user.service';
 import { Task } from '../../models/task.model';
 import { CategoryBadgeComponent } from '../../components/category-badge/category-badge.component';
 import { PriorityBadgeComponent } from '../../components/priority-badge/priority-badge.component';
