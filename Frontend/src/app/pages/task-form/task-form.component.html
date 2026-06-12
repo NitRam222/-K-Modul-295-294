@@ -1,0 +1,81 @@
+<section class="page-shell">
+  <h1>{{ editMode ? "Edit Task" : "New Task" }}</h1>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="task-form">
+    <div class="form-group">
+      <label for="titleInput"
+        >Titel <span class="required-asterisk">*</span></label
+      >
+      <input
+        id="titleInput"
+        formControlName="title"
+        required
+        placeholder="Titel der Aufgabe"
+      />
+      @if (
+        form.get("title")?.invalid &&
+        (form.get("title")?.dirty || form.get("title")?.touched)
+      ) {
+        <span class="error-msg">Titel ist erforderlich</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="descriptionInput"
+        >Beschreibung <span class="required-asterisk">*</span></label
+      >
+      <textarea
+        id="descriptionInput"
+        formControlName="description"
+        required
+        placeholder="Beschreibung der Aufgabe"
+      ></textarea>
+      @if (
+        form.get("description")?.invalid &&
+        (form.get("description")?.dirty || form.get("description")?.touched)
+      ) {
+        <span class="error-msg">Beschreibung ist erforderlich</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="statusSelect">Status</label>
+      <select id="statusSelect" formControlName="status">
+        <option value="TODO">TODO</option>
+        <option value="IN_PROGRESS">Progress</option>
+        <option value="DONE">Done</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="categorySelect">Kategorie</label>
+      <select id="categorySelect" formControlName="categoryId">
+        <option value="">Keine</option>
+        @for (c of categories; track c.id) {
+          <option [value]="c.id">{{ c.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="prioritySelect">Priorität</label>
+      <select id="prioritySelect" formControlName="priorityId">
+        <option value="">Keine</option>
+        @for (p of priorities; track p.id) {
+          <option [value]="p.id">{{ p.level }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="dueDateInput">Datum</label>
+      <input id="dueDateInput" type="date" formControlName="dueDate" />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="form.invalid">Save</button>
+      <button type="button" class="secondary" routerLink="/tasks">
+        Cancel
+      </button>
+    </div>
+  </form>
+</section>

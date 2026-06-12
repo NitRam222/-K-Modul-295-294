@@ -1,0 +1,39 @@
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.action-row {
+  display: flex;
+  gap: 8px;
+}
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #457b9d;
+  color: #fff;
+  transition: background-color 0.2s;
+}
+button:hover {
+  background: #1d3557;
+}
+.danger {
+  background: #e63946;
+}
+.danger:hover {
+  background: #b91c1c;
+}
+.secondary {
+  background: #adb5bd;
+}
+.secondary:hover {
+  background: #6c757d;
+}
+.detail-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}

@@ -1,0 +1,53 @@
+<section class="page-shell">
+  <h1>Benutzer suchen</h1>
+  <form class="inline-form" (ngSubmit)="search()" #searchForm="ngForm">
+    <div class="input-group">
+      <input
+        [(ngModel)]="query"
+        name="q"
+        placeholder="Suche..."
+        required
+        #searchInput="ngModel"
+        minlength="2"
+      />
+      @if (searchInput.invalid && (searchInput.dirty || searchInput.touched)) {
+        @if (searchInput.errors?.["required"]) {
+          <span class="error-msg">Suchbegriff ist erforderlich</span>
+        } @else if (searchInput.errors?.["minlength"]) {
+          <span class="error-msg"
+            >Bitte geben Sie mindestens 2 Zeichen ein</span
+          >
+        }
+      }
+    </div>
+    <button type="submit" [disabled]="searchForm.invalid">Suchen</button>
+  </form>
+  @if (users.length) {
+    <ul class="list">
+      @for (u of users; track u.username) {
+        <li
+          tabindex="0"
+          role="button"
+          (click)="loadTasks(u)"
+          (keydown.enter)="loadTasks(u)"
+          (keydown.space)="$event.preventDefault(); loadTasks(u)"
+        >
+          <strong>{{ u.displayName || u.username }}</strong>
+          <small>{{ u.email }}</small>
+        </li>
+      }
+    </ul>
+  }
+  @if (tasks.length) {
+    <div class="tasks">
+      <h2>Aufgaben von {{ selUser }}</h2>
+      @for (t of tasks; track t.id) {
+        <app-task-card
+          [task]="t"
+          [clickable]="false"
+          (deleted)="search()"
+        ></app-task-card>
+      }
+    </div>
+  }
+</section>

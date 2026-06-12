@@ -1,0 +1,11 @@
+.profile-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+}
+.error {
+  color: #b91c1c;
+  background: #fee2e2;
+  margin-top: 12px;
+}

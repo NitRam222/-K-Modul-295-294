@@ -1,0 +1,18 @@
+.page-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+button {
+  background: #457b9d;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+button:hover {
+  background: #1d3557;
+}

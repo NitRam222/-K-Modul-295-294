@@ -1,0 +1,64 @@
+.inline-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+input:focus {
+  outline: none;
+  border-color: #457b9d;
+}
+input.ng-invalid.ng-touched {
+  border-color: #e63946;
+}
+.error-msg {
+  color: #e63946;
+  font-size: 12px;
+  margin-left: 4px;
+}
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #457b9d;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+button:hover:not(:disabled) {
+  background: #1d3557;
+}
+button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+.list {
+  list-style: none;
+  padding: 0;
+}
+.list li {
+  background: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.list li:hover {
+  border-color: #457b9d;
+}

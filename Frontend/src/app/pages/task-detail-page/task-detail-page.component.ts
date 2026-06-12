@@ -11,39 +11,14 @@ import { PriorityBadgeComponent } from '../../components/priority-badge/priority
 @Component({
   selector: 'app-task-detail-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, CategoryBadgeComponent, PriorityBadgeComponent],
-  template: `
-    @if (task) {
-      <section class="page-shell">
-        <div class="detail-header">
-          <h1>{{ task.title }}</h1>
-          @if (canEdit) {
-            <div class="action-row">
-              <button [routerLink]="['/tasks/edit', task.id]">Edit</button>
-              <button class="secondary" (click)="toggle()">{{ task.status === 'DONE' ? 'TODO' : 'Done' }}</button>
-              <button class="danger" (click)="delete()">Del</button>
-            </div>
-          }
-        </div>
-        <p>{{ task.description }}</p>
-        <div class="detail-meta">
-          <app-category-badge [category]="task.category"></app-category-badge>
-          <app-priority-badge [priority]="task.priority"></app-priority-badge>
-          <span>{{ task.status }}</span>
-          <span>Owner: {{ task.owner?.username || task.user?.username }}</span>
-        </div>
-      </section>
-    } @else {
-      <p>Lade...</p>
-    }
-  `,
-  styles: [
-    ".detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }",
-    ".action-row { display: flex; gap: 8px; }",
-    "button { padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer; background: #457b9d; color: #fff; }",
-    ".danger { background: #e63946; } .secondary { background: #adb5bd; }",
-    ".detail-meta { display: flex; gap: 12px; align-items: center; }"
-  ]
+  imports: [
+    CommonModule,
+    RouterModule,
+    CategoryBadgeComponent,
+    PriorityBadgeComponent,
+  ],
+  templateUrl: './task-detail-page.component.html',
+  styleUrl: './task-detail-page.component.css',
 })
 export class TaskDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -57,35 +32,47 @@ export class TaskDetailPageComponent implements OnInit {
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) this.service.getById(id).subscribe(t => {
-      this.task = t;
-      this.updatePerms();
-      this.cdr.detectChanges();
-    });
+    if (id)
+      this.service.getById(id).subscribe((t) => {
+        this.task = t;
+        this.updatePerms();
+        this.cdr.detectChanges();
+      });
   }
 
   delete() {
-    if (this.task?.id && window.confirm('Löschen?')) this.service.delete(this.task.id).subscribe(() => history.back());
+    if (this.task?.id && window.confirm('Löschen?'))
+      this.service.delete(this.task.id).subscribe(() => history.back());
   }
 
   toggle() {
     if (!this.task) return;
-    const update = { ...this.task, status: (this.task.status === 'DONE' ? 'TODO' : 'DONE') as any };
-    this.service.update(update).subscribe(t => {
+    const update = {
+      ...this.task,
+      status: (this.task.status === 'DONE' ? 'TODO' : 'DONE') as any,
+    };
+    this.service.update(update).subscribe((t) => {
       this.task = t;
       this.cdr.detectChanges();
     });
   }
 
   private updatePerms() {
-    if (this.role.isAdmin()) { this.canEdit = true; return; }
+    if (this.role.isAdmin()) {
+      this.canEdit = true;
+      return;
+    }
     const owner = this.task?.owner || this.task?.user;
-    if (!owner || !this.role.hasUpdate()) { this.canEdit = false; return; }
+    if (!owner || !this.role.hasUpdate()) {
+      this.canEdit = false;
+      return;
+    }
     const curUser = this.auth.username.toLowerCase();
     const curSub = this.auth.sub.toLowerCase();
     const ownerName = (owner.username || '').toLowerCase();
     const ownerEmail = (owner.email || '').toLowerCase();
-    
-    this.canEdit = ownerName === curUser || ownerName === curSub || ownerEmail === curUser;
+
+    this.canEdit =
+      ownerName === curUser || ownerName === curSub || ownerEmail === curUser;
   }
 }

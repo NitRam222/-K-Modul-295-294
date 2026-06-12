@@ -1,0 +1,27 @@
+<section class="page-shell">
+  <h1>Kategorien</h1>
+  <p>Verwalten Sie Kategorien für Ihre Aufgaben.</p>
+  <form class="inline-form" (ngSubmit)="createCategory()" #catForm="ngForm">
+    <div class="input-group">
+      <input
+        [(ngModel)]="newName"
+        name="categoryName"
+        placeholder="Neue Kategorie"
+        required
+        #nameInput="ngModel"
+      />
+      @if (nameInput.invalid && (nameInput.dirty || nameInput.touched)) {
+        <span class="error-msg">Kategoriename ist erforderlich</span>
+      }
+    </div>
+    <button type="submit" [disabled]="catForm.invalid">Hinzufügen</button>
+  </form>
+  <ul class="list">
+    @for (c of categories; track c.id) {
+      <li>
+        <span>{{ c.name }}</span>
+        <button class="danger" (click)="deleteCategory(c.id)">Löschen</button>
+      </li>
+    }
+  </ul>
+</section>

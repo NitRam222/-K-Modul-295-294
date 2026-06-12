@@ -1,0 +1,27 @@
+<section class="page-shell">
+  <h1>Prioritäten</h1>
+  <p>Definieren Sie Prioritäten für Ihre Aufgaben.</p>
+  <form class="inline-form" (ngSubmit)="create()" #prioForm="ngForm">
+    <div class="input-group">
+      <input
+        [(ngModel)]="newName"
+        name="priorityLevel"
+        placeholder="Neue Priorität"
+        required
+        #levelInput="ngModel"
+      />
+      @if (levelInput.invalid && (levelInput.dirty || levelInput.touched)) {
+        <span class="error-msg">Prioritätsname ist erforderlich</span>
+      }
+    </div>
+    <button type="submit" [disabled]="prioForm.invalid">Hinzufügen</button>
+  </form>
+  <ul class="list">
+    @for (p of priorities; track p.id) {
+      <li>
+        <span>{{ p.level }}</span>
+        <button class="danger" (click)="deletePriority(p.id)">Löschen</button>
+      </li>
+    }
+  </ul>
+</section>

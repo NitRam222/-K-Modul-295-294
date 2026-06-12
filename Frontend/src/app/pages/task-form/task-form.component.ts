@@ -12,46 +12,8 @@ import { Priority } from '../../models/priority.model';
   selector: 'app-task-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  template: `
-    <section class="page-shell">
-      <h1>{{ editMode ? 'Edit Task' : 'New Task' }}</h1>
-      <form [formGroup]="form" (ngSubmit)="submit()" class="task-form">
-        <label for="titleInput">Titel</label> <input id="titleInput" formControlName="title" />
-        <label for="descriptionInput">Beschreibung</label> <textarea id="descriptionInput" formControlName="description"></textarea>
-        <label for="statusSelect">Status</label>
-        <select id="statusSelect" formControlName="status">
-          <option value="TODO">TODO</option>
-          <option value="IN_PROGRESS">Progress</option>
-          <option value="DONE">Done</option>
-        </select>
-        <label for="categorySelect">Kategorie</label>
-        <select id="categorySelect" formControlName="categoryId">
-          <option value="">Keine</option>
-          @for (c of categories; track c.id) {
-            <option [value]="c.id">{{ c.name }}</option>
-          }
-        </select>
-        <label for="prioritySelect">Priorität</label>
-        <select id="prioritySelect" formControlName="priorityId">
-          <option value="">Keine</option>
-          @for (p of priorities; track p.id) {
-            <option [value]="p.id">{{ p.level }}</option>
-          }
-        </select>
-        <label for="dueDateInput">Datum</label> <input id="dueDateInput" type="date" formControlName="dueDate" />
-        <div class="form-actions">
-          <button type="submit" [disabled]="form.invalid">Save</button>
-          <button type="button" class="secondary" routerLink="/tasks">Cancel</button>
-        </div>
-      </form>
-    </section>
-  `,
-  styles: [
-    ".task-form { display: grid; gap: 12px; max-width: 500px; }",
-    "input, textarea, select { width: 100%; border: 1px solid #ccc; border-radius: 8px; padding: 10px; }",
-    ".form-actions { display: flex; gap: 12px; margin-top: 12px; }",
-    "button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; background: #457b9d; color: #fff; }"
-  ]
+  templateUrl: './task-form.component.html',
+  styleUrl: './task-form.component.css',
 })
 export class TaskFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -63,11 +25,11 @@ export class TaskFormComponent implements OnInit {
 
   form = this.fb.group({
     title: ['', Validators.required],
-    description: [''],
+    description: ['', Validators.required],
     status: ['TODO', Validators.required],
     categoryId: [''],
     priorityId: [''],
-    dueDate: ['']
+    dueDate: [''],
   });
   categories: Category[] = [];
   priorities: Priority[] = [];
@@ -75,16 +37,22 @@ export class TaskFormComponent implements OnInit {
   private id?: number;
 
   ngOnInit() {
-    this.catService.getAll().subscribe(d => this.categories = d);
-    this.prioService.getAll().subscribe(d => this.priorities = d);
+    this.catService.getAll().subscribe((d) => (this.categories = d));
+    this.prioService.getAll().subscribe((d) => (this.priorities = d));
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editMode = true;
       this.id = +id;
-      this.taskService.getById(this.id).subscribe(t => this.form.patchValue({
-        title: t.title, description: t.description, status: t.status,
-        categoryId: t.category?.id as any || '', priorityId: t.priority?.id as any || '', dueDate: t.dueDate || ''
-      }));
+      this.taskService.getById(this.id).subscribe((t) =>
+        this.form.patchValue({
+          title: t.title,
+          description: t.description,
+          status: t.status,
+          categoryId: (t.category?.id as any) || '',
+          priorityId: (t.priority?.id as any) || '',
+          dueDate: t.dueDate || '',
+        }),
+      );
     }
   }
 
@@ -92,11 +60,14 @@ export class TaskFormComponent implements OnInit {
     if (this.form.invalid) return;
     const v = this.form.value;
     const payload: any = {
-      ...v, id: this.id,
+      ...v,
+      id: this.id,
       category: v.categoryId ? { id: +v.categoryId } : null,
-      priority: v.priorityId ? { id: +v.priorityId } : null
+      priority: v.priorityId ? { id: +v.priorityId } : null,
     };
-    (this.editMode ? this.taskService.update(payload) : this.taskService.create(payload))
-      .subscribe(() => this.router.navigate(['/tasks']));
+    (this.editMode
+      ? this.taskService.update(payload)
+      : this.taskService.create(payload)
+    ).subscribe(() => this.router.navigate(['/tasks']));
   }
 }

@@ -1,0 +1,18 @@
+<section class="page-shell">
+  <div class="page-toolbar">
+    <h1>Meine Aufgaben</h1>
+    @if (role.hasUpdate()) {
+      <button routerLink="/tasks/new">Neu</button>
+    }
+  </div>
+
+  @if (tasks.length) {
+    <div>
+      @for (t of tasks; track t.id) {
+        <app-task-card [task]="t" (deleted)="load()"> </app-task-card>
+      }
+    </div>
+  } @else {
+    <p>Keine Aufgaben gefunden.</p>
+  }
+</section>
