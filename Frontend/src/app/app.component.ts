@@ -6,7 +6,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
   selector: 'app-root',
   standalone: true,
   imports: [RouterModule, NavbarComponent],
-  template: `<app-navbar></app-navbar><main><router-outlet></router-outlet></main>`,
-  styles: ["main { padding: 20px; background: #f8fafc; min-height: 90vh; }"]
+  template: `<app-navbar></app-navbar>
+    <main><router-outlet></router-outlet></main>`,
+  styles: ['main { padding: 20px; background: #f8fafc; min-height: 90vh; }'],
 })
 export class AppComponent {}

@@ -1,6 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import {
+  provideHttpClientTesting,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { TaskService } from './task.service';
@@ -15,11 +18,7 @@ describe('TaskService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        TaskService,
-        provideHttpClient(),
-        provideHttpClientTesting()
-      ]
+      providers: [TaskService, provideHttpClient(), provideHttpClientTesting()],
     });
 
     service = TestBed.inject(TaskService);
@@ -40,11 +39,11 @@ describe('TaskService', () => {
         id: 1,
         title: 'Test Aufgabe',
         description: 'Beschreibung',
-        status: 'TODO'
-      } as Task
+        status: 'TODO',
+      } as Task,
     ];
 
-    service.getAll().subscribe(tasks => {
+    service.getAll().subscribe((tasks) => {
       expect(tasks).toEqual(mockTasks);
     });
 
@@ -59,10 +58,10 @@ describe('TaskService', () => {
       id: 1,
       title: 'Test Aufgabe',
       description: 'Beschreibung',
-      status: 'TODO'
+      status: 'TODO',
     } as Task;
 
-    service.getById(1).subscribe(task => {
+    service.getById(1).subscribe((task) => {
       expect(task).toEqual(mockTask);
     });
 
@@ -76,17 +75,17 @@ describe('TaskService', () => {
     const newTask: Task = {
       title: 'Neue Aufgabe',
       description: 'Neue Beschreibung',
-      status: 'TODO'
+      status: 'TODO',
     } as Task;
 
     const createdTask: Task = {
       id: 1,
       title: 'Neue Aufgabe',
       description: 'Neue Beschreibung',
-      status: 'TODO'
+      status: 'TODO',
     } as Task;
 
-    service.create(newTask).subscribe(task => {
+    service.create(newTask).subscribe((task) => {
       expect(task).toEqual(createdTask);
     });
 
@@ -102,10 +101,10 @@ describe('TaskService', () => {
       id: 1,
       title: 'Geänderte Aufgabe',
       description: 'Geänderte Beschreibung',
-      status: 'DONE'
+      status: 'DONE',
     } as Task;
 
-    service.update(updatedTask).subscribe(task => {
+    service.update(updatedTask).subscribe((task) => {
       expect(task).toEqual(updatedTask);
     });
 

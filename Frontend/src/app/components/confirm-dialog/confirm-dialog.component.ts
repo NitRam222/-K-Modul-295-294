@@ -15,11 +15,11 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: [
-    ".confirm { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }",
-    ".actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }",
-    "button { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }",
-    ".danger { background: #e63946; color: #fff; }"
-  ]
+    '.confirm { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }',
+    '.actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }',
+    'button { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }',
+    '.danger { background: #e63946; color: #fff; }',
+  ],
 })
 export class ConfirmDialogComponent {
   @Input() message = 'Sicher?';

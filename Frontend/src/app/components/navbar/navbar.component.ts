@@ -23,11 +23,11 @@ import { AuthService } from '../../services/auth.service';
     </nav>
   `,
   styles: [
-    ".navbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: #1d3557; color: #fff; }",
-    ".brand { font-size: 1.2rem; font-weight: 700; color: #f1faee; text-decoration: none; }",
-    ".links { display: flex; gap: 16px; align-items: center; }",
-    ".links a, .links button { color: #f1faee; text-decoration: none; background: none; border: none; cursor: pointer; font: inherit; }"
-  ]
+    '.navbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: #1d3557; color: #fff; }',
+    '.brand { font-size: 1.2rem; font-weight: 700; color: #f1faee; text-decoration: none; }',
+    '.links { display: flex; gap: 16px; align-items: center; }',
+    '.links a, .links button { color: #f1faee; text-decoration: none; background: none; border: none; cursor: pointer; font: inherit; }',
+  ],
 })
 export class NavbarComponent {
   auth = inject(AuthService);

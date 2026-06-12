@@ -18,15 +18,25 @@ export const routes: Route[] = [
     canActivate: [AuthGuard],
     children: [
       { path: 'tasks', component: TaskListPageComponent },
-      { path: 'tasks/new', component: TaskFormComponent, canActivate: [RoleGuard], data: { roles: [AppRoles.Update] } },
-      { path: 'tasks/edit/:id', component: TaskFormComponent, canActivate: [RoleGuard], data: { roles: [AppRoles.Update] } },
+      {
+        path: 'tasks/new',
+        component: TaskFormComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [AppRoles.Update] },
+      },
+      {
+        path: 'tasks/edit/:id',
+        component: TaskFormComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [AppRoles.Update] },
+      },
       { path: 'tasks/:id', component: TaskDetailPageComponent },
       { path: 'categories', component: CategoryPageComponent },
       { path: 'priorities', component: PriorityPageComponent },
       { path: 'profile', component: UserProfilePageComponent },
       { path: 'users/search', component: UserSearchPageComponent },
-      { path: '', redirectTo: 'tasks', pathMatch: 'full' }
-    ]
+      { path: '', redirectTo: 'tasks', pathMatch: 'full' },
+    ],
   },
-  { path: '**', redirectTo: 'tasks' }
+  { path: '**', redirectTo: 'tasks' },
 ];

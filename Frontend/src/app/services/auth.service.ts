@@ -12,7 +12,7 @@ const authConfig: AuthConfig = {
   oidc: true,
   disablePKCE: false,
   showDebugInformation: !environment.production,
-  strictDiscoveryDocumentValidation: false
+  strictDiscoveryDocumentValidation: false,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -25,15 +25,28 @@ export class AuthService {
   }
 
   initialize() {
-    return this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => true).catch(() => true);
+    return this.oauthService
+      .loadDiscoveryDocumentAndTryLogin()
+      .then(() => true)
+      .catch(() => true);
   }
 
-  login() { this.oauthService.initCodeFlow(); }
-  logout() { this.oauthService.logOut(); }
+  login() {
+    this.oauthService.initCodeFlow();
+  }
+  logout() {
+    this.oauthService.logOut();
+  }
 
-  get accessToken() { return this.oauthService.getAccessToken(); }
-  get isAuthenticated() { return this.oauthService.hasValidAccessToken(); }
-  get identityClaims(): any { return this.oauthService.getIdentityClaims(); }
+  get accessToken() {
+    return this.oauthService.getAccessToken();
+  }
+  get isAuthenticated() {
+    return this.oauthService.hasValidAccessToken();
+  }
+  get identityClaims(): any {
+    return this.oauthService.getIdentityClaims();
+  }
 
   get accessTokenClaims(): any {
     const token = this.accessToken;
@@ -42,9 +55,16 @@ export class AuthService {
       const base64Url = token.split('.')[1];
       let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       while (base64.length % 4) base64 += '=';
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(''),
+      );
       return JSON.parse(jsonPayload);
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }
 
   get username() {
@@ -71,7 +91,8 @@ export class AuthService {
     if (!c) return [];
     const roles = new Set<string>();
     const add = (r: any) => {
-      if (Array.isArray(r)) r.forEach(v => roles.add(String(v).toLowerCase()));
+      if (Array.isArray(r))
+        r.forEach((v) => roles.add(String(v).toLowerCase()));
       else if (typeof r === 'string') roles.add(r.toLowerCase());
     };
     add(c.realm_access?.roles);
@@ -83,5 +104,7 @@ export class AuthService {
     return Array.from(roles);
   }
 
-  hasRole(role: string) { return this.roles.includes(role.toLowerCase()); }
+  hasRole(role: string) {
+    return this.roles.includes(role.toLowerCase());
+  }
 }

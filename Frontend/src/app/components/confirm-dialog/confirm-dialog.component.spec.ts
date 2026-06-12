@@ -10,7 +10,7 @@ describe('ConfirmDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConfirmDialogComponent]
+      imports: [ConfirmDialogComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConfirmDialogComponent);
@@ -26,7 +26,8 @@ describe('ConfirmDialogComponent', () => {
   it('should show default message', () => {
     fixture.detectChanges();
 
-    const message = fixture.debugElement.query(By.css('p')).nativeElement.textContent;
+    const message = fixture.debugElement.query(By.css('p')).nativeElement
+      .textContent;
 
     expect(message).toContain('Sicher?');
   });
@@ -36,7 +37,8 @@ describe('ConfirmDialogComponent', () => {
 
     fixture.detectChanges();
 
-    const message = fixture.debugElement.query(By.css('p')).nativeElement.textContent;
+    const message = fixture.debugElement.query(By.css('p')).nativeElement
+      .textContent;
 
     expect(message).toContain('Aufgabe wirklich löschen?');
   });

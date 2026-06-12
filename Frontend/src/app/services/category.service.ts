@@ -8,7 +8,13 @@ export class CategoryService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.backendBaseUrl}categories`;
 
-  getAll() { return this.http.get<Category[]>(this.url); }
-  create(category: Category) { return this.http.post<Category>(this.url, category); }
-  delete(id: number) { return this.http.delete<void>(`${this.url}/${id}`); }
+  getAll() {
+    return this.http.get<Category[]>(this.url);
+  }
+  create(category: Category) {
+    return this.http.post<Category>(this.url, category);
+  }
+  delete(id: number) {
+    return this.http.delete<void>(`${this.url}/${id}`);
+  }
 }
